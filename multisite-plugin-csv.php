@@ -3,7 +3,7 @@
 Plugin Name: Multisite Plugin CSV
 Version: 1.0.0
 License: GPL version 2 or any later version
-Description: Generate a CSV list of all active plugins on a multisite network
+Description: Generate a CSV list of all plugins and their activation status on a multisite network
 Author: Ryan Duff
 Author URI: http://maintainn.com
 Plugin URI: http://maintainn.com
@@ -38,6 +38,7 @@ class MultisitePluginCSV {
 	 * @type string
 	 */
 	public $plugin_path = '';
+
 
 	/**
 	 * Array of all plugins.
@@ -121,6 +122,7 @@ class MultisitePluginCSV {
 	 * Add 'Multisite Plugin CSV' menu page under Plugins menu
 	 *
 	 * @since  1.0.0
+	 *
 	 * @return void
 	 */
 	public function multisite_plugin_csv_menu() {
@@ -134,6 +136,7 @@ class MultisitePluginCSV {
 	 * Display Multisite Plugin CSV admin page
 	 *
 	 * @since  1.0.0
+	 *
 	 * @return void
 	 */
 	public function multisite_plugin_csv_page() {
@@ -142,7 +145,6 @@ class MultisitePluginCSV {
 			echo '<h2>' . __( 'Multisite Plugin CSV', 'multisite-plugin-csv' ) . '</h2>';
 			echo '<div>' . __( 'This process will generate a report of all plugins on the network. It will list which plugins are active on which sites and return a sortable CSV file.', 'multisite-plugin-csv' ) . '</div>';
 			echo '<a href="' . wp_nonce_url( 'plugins.php?page=multisite-plugin-csv&action=generate-plugin-csv', 'multisite-plugin-csv-generate') . '" class="button" style="margin:20px auto;" />' . __( 'Generate Plugin Report!', 'multisite-plugin-csv' ) . '</a>';
-
 		echo '</div><!-- /.wrap -->';
 
 	}
@@ -162,7 +164,7 @@ class MultisitePluginCSV {
 
 		if ( ( 'generate-plugin-csv' === $action ) && wp_verify_nonce( $nonce, 'multisite-plugin-csv-generate' ) ) {
 
-			// Get site name
+			// Get main network site domain and sanitize
 			global $current_site;
 			$network_domain = sanitize_title( $current_site->domain );
 
