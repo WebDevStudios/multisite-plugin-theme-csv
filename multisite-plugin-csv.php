@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Multisite Plugin CSV
-Version: 1.0.0
+Version: 1.1.0
 License: GPL version 2 or any later version
 Description: Generate a CSV list of all plugins and their activation status on a multisite network
 Author: Ryan Duff
@@ -86,7 +86,7 @@ class MultisitePluginCSV {
 		$this->network_active_plugins = array_keys( get_site_option( 'active_sitewide_plugins', false, false ) );
 
 		add_action( 'network_admin_menu', array( $this, 'multisite_plugin_csv_menu' ) );
-		add_action( 'admin_init', array( $this, 'output_csv' ) );
+		add_action( 'admin_init', array( $this, 'check_request' ) );
 
 	}
 
@@ -151,58 +151,73 @@ class MultisitePluginCSV {
 
 
 	/**
-	 * Generate the CSV file
+	 * Check our request and trigger a plugin or theme CSV if requested
 	 *
-	 * @since  1.0.0
+	 * @since  1.1
 	 *
 	 * @return void
 	 */
-	public function output_csv() {
+	public function check_request() {
 
 		$action = empty( $_REQUEST['action'] ) ? '' : $_REQUEST['action'];
 		$nonce = empty( $_REQUEST['_wpnonce'] ) ? '' : $_REQUEST['_wpnonce'];
 
 		if ( ( 'generate-plugin-csv' === $action ) && wp_verify_nonce( $nonce, 'multisite-plugin-csv-generate' ) ) {
 
-			// Get main network site domain and sanitize
-			global $current_site;
-			$network_domain = sanitize_title( $current_site->domain );
-
-			// Generate our filename to use
-			$filename = 'multisite-active-plugins_' . $network_domain . '.csv';
-
-			// Setup headers
-			header( 'Content-Description: File Transfer' );
-			header( 'Content-Type: text/csv' ) ;
-			header( 'Content-Disposition: attachment; filename=' . $filename );
-			header( 'Expires: 0' );
-			header( 'Pragma: public' );
-
-			$fh = @fopen( 'php://output', 'w' );
-
-				// Get our header row
-				$header = $this->generate_csv_header();
-
-				// Add the header row
-				fputcsv( $fh, $header );
-
-				// Generate plugin data for the network
-				$site_plugins = $this->generate_plugin_list();
-
-				// Loop through adding a row for each site
-				foreach ( $site_plugins as $row ) {
-
-					fputcsv( $fh, $row );
-
-				}
-
-			// Close the file
-			fclose ($fh );
-
-			// Exit so nothing else gets sent
-			exit();
+			$this->output_plugin_csv();
 
 		}
+
+	}
+
+
+
+	/**
+	 * Generate the Plugin CSV file
+	 *
+	 * @since  1.0.0
+	 *
+	 * @return void
+	 */
+	protected function output_plugin_csv() {
+
+		// Get main network site domain and sanitize
+		global $current_site;
+		$network_domain = sanitize_title( $current_site->domain );
+
+		// Generate our filename to use
+		$filename = 'multisite-active-plugins_' . $network_domain . '.csv';
+
+		// Setup headers
+		header( 'Content-Description: File Transfer' );
+		header( 'Content-Type: text/csv' ) ;
+		header( 'Content-Disposition: attachment; filename=' . $filename );
+		header( 'Expires: 0' );
+		header( 'Pragma: public' );
+
+		$fh = @fopen( 'php://output', 'w' );
+
+			// Get our header row
+			$header = $this->generate_csv_header_plugin();
+
+			// Add the header row
+			fputcsv( $fh, $header );
+
+			// Generate plugin data for the network
+			$site_plugins = $this->generate_plugin_list();
+
+			// Loop through adding a row for each site
+			foreach ( $site_plugins as $row ) {
+
+				fputcsv( $fh, $row );
+
+			}
+
+		// Close the file
+		fclose ($fh );
+
+		// Exit so nothing else gets sent
+		exit();
 
 	}
 
@@ -228,7 +243,7 @@ class MultisitePluginCSV {
 		// Loop through site ids to generate each row of CSV data
 		foreach ( $site_ids as $site_id ) {
 
-			$plugin_list[] = $this->process_site( $site_id );
+			$plugin_list[] = $this->process_site_plugins( $site_id );
 
 		}
 
@@ -256,13 +271,13 @@ class MultisitePluginCSV {
 
 
 	/**
-	 * Build the header row for the CSV file
+	 * Build the header row for the plugin CSV file
 	 *
 	 * @since  1.0.0
 	 *
-	 * @return array  An array of columns used in the CSV file
+	 * @return array  An array of columns used in the plugin CSV file
 	 */
-	protected function generate_csv_header() {
+	protected function generate_csv_header_plugin() {
 
 		// Get all of our plugin data for the site
 		$plugins = get_plugins();
@@ -294,7 +309,7 @@ class MultisitePluginCSV {
 	 *
 	 * @return array           An array of which plugins are active/inactive/network active
 	 */
-	protected function process_site( $site_id = 0 ) {
+	protected function process_site_plugins( $site_id = 0 ) {
 
 		// Switch to this site so we can gather some data
 		switch_to_blog( $site_id );
