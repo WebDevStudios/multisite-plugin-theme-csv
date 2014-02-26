@@ -144,7 +144,7 @@ class MultisitePluginCSV {
 		echo '<div class="wrap">';
 			echo '<h2>' . __( 'Multisite Plugin CSV', 'multisite-plugin-csv' ) . '</h2>';
 			echo '<div>' . __( 'This process will generate a report of all plugins on the network. It will list which plugins are active on which sites and return a sortable CSV file.', 'multisite-plugin-csv' ) . '</div>';
-			echo '<a href="' . wp_nonce_url( 'plugins.php?page=multisite-plugin-csv&action=generate-plugin-csv', 'multisite-plugin-csv-generate') . '" class="button" style="margin:20px auto;" />' . __( 'Generate Plugin Report!', 'multisite-plugin-csv' ) . '</a>';
+			echo '<a href="' . wp_nonce_url( 'plugins.php?page=multisite-plugin-csv&action=generate-plugin-csv-plugins', 'multisite-plugin-csv-generate-plugins') . '" class="button" style="margin:20px auto;" />' . __( 'Generate Plugin Report!', 'multisite-plugin-csv' ) . '</a>';
 		echo '</div><!-- /.wrap -->';
 
 	}
@@ -162,7 +162,7 @@ class MultisitePluginCSV {
 		$action = empty( $_REQUEST['action'] ) ? '' : $_REQUEST['action'];
 		$nonce = empty( $_REQUEST['_wpnonce'] ) ? '' : $_REQUEST['_wpnonce'];
 
-		if ( ( 'generate-plugin-csv' === $action ) && wp_verify_nonce( $nonce, 'multisite-plugin-csv-generate' ) ) {
+		if ( ( 'generate-plugin-csv-plugins' === $action ) && wp_verify_nonce( $nonce, 'multisite-plugin-csv-generate-plugins' ) ) {
 
 			$this->output_plugin_csv();
 
