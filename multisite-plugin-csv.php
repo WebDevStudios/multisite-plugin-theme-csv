@@ -145,6 +145,8 @@ class MultisitePluginCSV {
 			echo '<h2>' . __( 'Multisite Plugin CSV', 'multisite-plugin-csv' ) . '</h2>';
 			echo '<div>' . __( 'This process will generate a report of all plugins on the network. It will list which plugins are active on which sites and return a sortable CSV file.', 'multisite-plugin-csv' ) . '</div>';
 			echo '<a href="' . wp_nonce_url( 'plugins.php?page=multisite-plugin-csv&action=generate-plugin-csv-plugins', 'multisite-plugin-csv-generate-plugins') . '" class="button" style="margin:20px auto;" />' . __( 'Generate Plugin Report!', 'multisite-plugin-csv' ) . '</a>';
+			echo '<div class="clear"></div>';
+			echo '<a href="' . wp_nonce_url( 'plugins.php?page=multisite-plugin-csv&action=generate-plugin-csv-themes', 'multisite-plugin-csv-generate-themes') . '" class="button" style="margin:20px auto;" />' . __( 'Generate Theme Report!', 'multisite-plugin-csv' ) . '</a>';
 		echo '</div><!-- /.wrap -->';
 
 	}
@@ -166,10 +168,13 @@ class MultisitePluginCSV {
 
 			$this->output_plugin_csv();
 
+		} elseif ( ( 'generate-plugin-csv-themes' === $action ) && wp_verify_nonce( $nonce, 'multisite-plugin-csv-generate-themes' ) ) {
+
+			$this->output_theme_csv();
+
 		}
 
 	}
-
 
 
 	/**
@@ -218,6 +223,11 @@ class MultisitePluginCSV {
 
 		// Exit so nothing else gets sent
 		exit();
+
+	}
+
+
+	protected function output_theme_csv() {
 
 	}
 
