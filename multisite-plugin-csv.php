@@ -7,7 +7,7 @@ Description: Generate a CSV list of all plugins and their activation status on a
 Author: Ryan Duff
 Author URI: http://maintainn.com
 Plugin URI: http://maintainn.com
-Text Domain: multisite-plugin-csv
+Text Domain: multisite-plugin-theme-csv
 Domain Path: /languages
 */
 
@@ -97,7 +97,7 @@ class MultisitePluginCSV {
 
 		$this->plugin_url    = plugins_url( '/', __FILE__ );
 		$this->plugin_path   = plugin_dir_path( __FILE__ );
-		$this->load_language( 'multisite-plugin-csv' );
+		$this->load_language( 'multisite-plugin-theme-csv' );
 
 		$this->network_active_plugins = array_keys( get_site_option( 'active_sitewide_plugins', false, false ) );
 
@@ -143,7 +143,7 @@ class MultisitePluginCSV {
 	 */
 	public function multisite_plugin_theme_csv_menu() {
 
-		add_submenu_page( 'sites.php', __( 'Multisite Plugin and Theme CSV', 'multisite-plugin-csv' ), __( 'Multisite Plugin and Theme CSV', 'multisite-plugin-csv' ), 'manage-sites', 'multisite-plugin-theme-csv', array( $this, 'multisite_plugin_theme_csv_page' ) );
+		add_submenu_page( 'sites.php', __( 'Multisite Plugin and Theme CSV', 'multisite-plugin-theme-csv' ), __( 'Multisite Plugin and Theme CSV', 'multisite-plugin-theme-csv' ), 'manage-sites', 'multisite-plugin-theme-csv', array( $this, 'multisite_plugin_theme_csv_page' ) );
 
 	}
 
@@ -158,11 +158,11 @@ class MultisitePluginCSV {
 	public function multisite_plugin_theme_csv_page() {
 
 		echo '<div class="wrap">';
-			echo '<h2>' . __( 'Multisite Plugin and Theme CSV', 'multisite-plugin-csv' ) . '</h2>';
-			echo '<div>' . __( 'This process will generate a report of all plugins on the network. It will list which plugins are active on which sites and return a sortable CSV file.', 'multisite-plugin-csv' ) . '</div>';
-			echo '<a href="' . wp_nonce_url( 'sites.php?page=multisite-plugin-theme-csv&action=generate-plugin-csv-plugins', 'multisite-plugin-csv-generate-plugins') . '" class="button" style="margin:20px auto;" />' . __( 'Generate Plugin Report!', 'multisite-plugin-csv' ) . '</a>';
-			echo '<div>' . __( 'This process will generate a report of all themes on the network. It will list which themes are active and available on which sites and return a sortable CSV file.', 'multisite-plugin-csv' ) . '</div>';
-			echo '<a href="' . wp_nonce_url( 'sites.php?page=multisite-plugin-theme-csv&action=generate-plugin-csv-themes', 'multisite-plugin-csv-generate-themes') . '" class="button" style="margin:20px auto;" />' . __( 'Generate Theme Report!', 'multisite-plugin-csv' ) . '</a>';
+			echo '<h2>' . __( 'Multisite Plugin and Theme CSV', 'multisite-plugin-theme-csv' ) . '</h2>';
+			echo '<div>' . __( 'This process will generate a report of all plugins on the network. It will list which plugins are active on which sites and return a sortable CSV file.', 'multisite-plugin-theme-csv' ) . '</div>';
+			echo '<a href="' . wp_nonce_url( 'sites.php?page=multisite-plugin-theme-csv&action=generate-plugin-csv-plugins', 'multisite-plugin-theme-csv-generate-plugins') . '" class="button" style="margin:20px auto;" />' . __( 'Generate Plugin Report!', 'multisite-plugin-theme-csv' ) . '</a>';
+			echo '<div>' . __( 'This process will generate a report of all themes on the network. It will list which themes are active and available on which sites and return a sortable CSV file.', 'multisite-plugin-theme-csv' ) . '</div>';
+			echo '<a href="' . wp_nonce_url( 'sites.php?page=multisite-plugin-theme-csv&action=generate-plugin-csv-themes', 'multisite-plugin-theme-csv-generate-themes') . '" class="button" style="margin:20px auto;" />' . __( 'Generate Theme Report!', 'multisite-plugin-theme-csv' ) . '</a>';
 		echo '</div><!-- /.wrap -->';
 
 	}
@@ -367,7 +367,7 @@ class MultisitePluginCSV {
 		$header = array();
 
 		// Insert our first column title
-		$header[] = __( 'Site URL', 'multisite-plugin-csv' );
+		$header[] = __( 'Site URL', 'multisite-plugin-theme-csv' );
 
 		// Add the title and file path for each plugin
 		foreach ( $this->all_plugins as $plugin => $data ) {
@@ -394,7 +394,7 @@ class MultisitePluginCSV {
 		$header = array();
 
 		// Insert our first column title
-		$header[] = __( 'Site URL', 'multisite-plugin-csv' );
+		$header[] = __( 'Site URL', 'multisite-plugin-theme-csv' );
 
 		// Add the title and file path for each theme
 		foreach ( $this->all_themes as $theme => $data ) {
@@ -445,17 +445,17 @@ class MultisitePluginCSV {
 			// If it's an active plugin for the site
 			if ( in_array( $plugin, $active_plugins ) ) {
 
-				$row[] = __( 'Yes', 'multisite-plugin-csv' );
+				$row[] = __( 'Yes', 'multisite-plugin-theme-csv' );
 
 			// If it's network active
 			} elseif ( in_array( $plugin, $this->network_active_plugins ) ) {
 
-				$row[] = __( 'Network Active', 'multisite-plugin-csv' );
+				$row[] = __( 'Network Active', 'multisite-plugin-theme-csv' );
 
 			// If we're here, it's not active
 			} else {
 
-				$row[] = __( 'No', 'multisite-plugin-csv' );
+				$row[] = __( 'No', 'multisite-plugin-theme-csv' );
 
 			}
 
@@ -503,22 +503,22 @@ class MultisitePluginCSV {
 			// If it's the active them for the site
 			if (  $theme === $current_theme ) {
 
-				$row[] = __( 'Active', 'multisite-plugin-csv' );
+				$row[] = __( 'Active', 'multisite-plugin-theme-csv' );
 
 			// If it's network available
 			} elseif ( in_array( $theme, array_keys( $this->all_themes_network ) ) ) {
 
-				$row[] = __( 'Available (Network)', 'multisite-plugin-csv' );
+				$row[] = __( 'Available (Network)', 'multisite-plugin-theme-csv' );
 
 			// If it's manually available
 			} elseif ( in_array( $theme, array_keys( $allowed_themes ) ) ) {
 
-				$row[] = __( 'Available (Site)', 'multisite-plugin-csv' );
+				$row[] = __( 'Available (Site)', 'multisite-plugin-theme-csv' );
 
 			// If it's not available at all
 			} else {
 
-				$row[] = __( 'Not Available', 'multisite-plugin-csv' );
+				$row[] = __( 'Not Available', 'multisite-plugin-theme-csv' );
 
 			}
 
