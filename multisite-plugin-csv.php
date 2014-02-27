@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Multisite Plugin CSV
+Plugin Name: Multisite Plugin and Theme CSV
 Version: 1.1.0
 License: GPL version 2 or any later version
-Description: Generate a CSV list of all plugins and their activation status on a multisite network
+Description: Generate a CSV list of all plugins or themes on a multisite network and their activation status
 Author: Ryan Duff
 Author URI: http://maintainn.com
 Plugin URI: http://maintainn.com
