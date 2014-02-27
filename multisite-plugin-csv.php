@@ -255,7 +255,7 @@ class MultisitePluginCSV {
 	 */
 	protected function output_theme_csv() {
 
-		// Get all of our theme data for the site
+		// Get all of our theme data for the network
 		$this->all_themes = wp_get_themes();
 		$this->all_themes_network = wp_get_themes( array( 'allowed' => 'network' ) );
 
