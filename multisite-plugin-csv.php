@@ -57,6 +57,22 @@ class MultisitePluginCSV {
 
 
 	/**
+	 * Array of all themes.
+	 *
+	 * @type string
+	 */
+	public $all_themes = '';
+
+
+	/**
+	 * Array of all network active themes.
+	 *
+	 * @type string
+	 */
+	public $all_themes_network = '';
+
+
+	/**
 	 * Access this plugin’s working instance
 	 *
 	 * @since   1.0.0
@@ -155,7 +171,7 @@ class MultisitePluginCSV {
 	/**
 	 * Check our request and trigger a plugin or theme CSV if requested
 	 *
-	 * @since  1.1
+	 * @since  1.1.0
 	 *
 	 * @return void
 	 */
@@ -227,7 +243,56 @@ class MultisitePluginCSV {
 	}
 
 
+	/**
+	 * Generate the Theme CSV file
+	 *
+	 * @since  1.1.0
+	 *
+	 * @return void
+	 */
 	protected function output_theme_csv() {
+
+		// Get all of our theme data for the site
+		$this->all_themes = wp_get_themes();
+		$this->all_themes_network = wp_get_themes( array( 'allowed' => 'network' ) );
+
+		// Get main network site domain and sanitize
+		global $current_site;
+		$network_domain = sanitize_title( $current_site->domain );
+
+		// Generate our filename to use
+		$filename = 'multisite-active-themes_' . $network_domain . '.csv';
+
+		// Setup headers
+		header( 'Content-Description: File Transfer' );
+		header( 'Content-Type: text/csv' ) ;
+		header( 'Content-Disposition: attachment; filename=' . $filename );
+		header( 'Expires: 0' );
+		header( 'Pragma: public' );
+
+		$fh = @fopen( 'php://output', 'w' );
+
+			// Get our header row
+			$header = $this->generate_csv_header_themes();
+
+			// Add the header row
+			fputcsv( $fh, $header );
+
+			// Generate theme data for the network
+			$site_plugins = $this->generate_theme_list();
+
+			// Loop through adding a row for each site
+			foreach ( $site_plugins as $row ) {
+
+				fputcsv( $fh, $row );
+
+			}
+
+		// Close the file
+		fclose ($fh );
+
+		// Exit so nothing else gets sent
+		exit();
 
 	}
 
@@ -258,6 +323,33 @@ class MultisitePluginCSV {
 		}
 
 		return $plugin_list;
+
+	}
+
+
+	/**
+	 * Gather all the theme data from every site on the network
+	 *
+	 * @since  1.1.0
+	 *
+	 * @return array  An array of sites containing an array of theme statuses
+	 */
+	protected function generate_theme_list() {
+
+		// Grab our site IDs to loop through
+		$site_ids = $this->get_site_ids();
+
+		// An array to hold our plugin data
+		$theme_list = array();
+
+		// Loop through site ids to generate each row of CSV data
+		foreach ( $site_ids as $site_id ) {
+
+			$theme_list[] = $this->process_site_themes( $site_id );
+
+		}
+
+		return $theme_list;
 
 	}
 
@@ -302,6 +394,35 @@ class MultisitePluginCSV {
 		foreach ( $plugins as $plugin => $data ) {
 
 			$header[] = $data['Name'] . ' (' . $plugin . ')';
+
+		}
+
+		return $header;
+
+	}
+
+
+	/**
+	 * Build the header row for the theme CSV file
+	 *
+	 * @since  1.1.0
+	 *
+	 * @return array  An array of columns used in the theme CSV file
+	 */
+	protected function generate_csv_header_themes() {
+
+		// Create an array to hold our header data
+		$header = array();
+
+		// Insert our first column title
+		$header[] = __( 'Site URL', 'multisite-plugin-csv' );
+
+		// Add the title and file path for each theme
+		foreach ( $this->all_themes as $theme => $data ) {
+
+			// $path = $theme->get_stylesheet_directory();
+
+			$header[] = $data->Name . ' (' . $theme . ')';
 
 		}
 
@@ -356,6 +477,69 @@ class MultisitePluginCSV {
 			} else {
 
 				$row[] = __( 'No', 'multisite-plugin-csv' );
+
+			}
+
+		}
+
+		return $row;
+
+	}
+
+
+	/**
+	 * Process a site and build a row of theme data
+	 *
+	 * @since  1.1.0
+	 *
+	 * @param  integer $site_id The id of the site we're processing
+	 *
+	 * @return array           An array of active/available themes
+	 */
+	protected function process_site_themes( $site_id = 0 ) {
+
+		// Switch to this site so we can gather some data
+		switch_to_blog( $site_id );
+
+			$siteurl = site_url();
+
+			$current_theme = basename( get_stylesheet_directory() );
+
+			$allowed_themes = wp_get_themes( array( 'allowed' => true ) );
+
+		restore_current_blog();
+
+		// An array to hold our theme data for this site
+		$row = array();
+
+		// Add the site url as the first column
+		$row[] = $siteurl;
+
+		// Grab the array keys (theme folder slugs)
+		$theme_slugs = array_keys( $this->all_themes );
+
+		// Loop through all installed themes
+		foreach ( $theme_slugs as $theme ) {
+
+			// If it's the active them for the site
+			if (  $theme === $current_theme ) {
+
+				$row[] = __( 'Active', 'multisite-plugin-csv' );
+
+			// If it's network available
+			} elseif ( in_array( $theme, array_keys( $this->all_themes_network ) ) ) {
+
+				$row[] = __( 'Available (Network)', 'multisite-plugin-csv' );
+
+			// If it's manually available
+			} elseif ( in_array( $theme, array_keys( $allowed_themes ) ) ) {
+
+				$row[] = __( 'Available (Site)', 'multisite-plugin-csv' );
+
+			// If it's not available at all
+			} else {
+
+				$row[] = __( 'Not Available', 'multisite-plugin-csv' );
 
 			}
 
