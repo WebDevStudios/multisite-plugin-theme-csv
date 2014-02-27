@@ -202,6 +202,9 @@ class MultisitePluginCSV {
 	 */
 	protected function output_plugin_csv() {
 
+		// Get all of our plugin data for the network
+		$this->all_plugins = get_plugins();
+
 		// Get main network site domain and sanitize
 		global $current_site;
 		$network_domain = sanitize_title( $current_site->domain );
@@ -306,9 +309,6 @@ class MultisitePluginCSV {
 	 */
 	protected function generate_plugin_list() {
 
-		// Get a list of all installed plugins
-		$this->all_plugins = get_plugins();
-
 		// Grab our site IDs to loop through
 		$site_ids = $this->get_site_ids();
 
@@ -363,9 +363,6 @@ class MultisitePluginCSV {
 	 */
 	protected function generate_csv_header_plugin() {
 
-		// Get all of our plugin data for the site
-		$plugins = get_plugins();
-
 		// Create an array to hold our header data
 		$header = array();
 
@@ -373,7 +370,7 @@ class MultisitePluginCSV {
 		$header[] = __( 'Site URL', 'multisite-plugin-csv' );
 
 		// Add the title and file path for each plugin
-		foreach ( $plugins as $plugin => $data ) {
+		foreach ( $this->all_plugins as $plugin => $data ) {
 
 			$header[] = $data['Name'] . ' (' . $plugin . ')';
 
