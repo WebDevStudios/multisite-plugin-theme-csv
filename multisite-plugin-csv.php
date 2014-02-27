@@ -355,24 +355,6 @@ class MultisitePluginCSV {
 
 
 	/**
-	 * Get the ids of sites active on the network
-	 *
-	 * @since  1.0.0
-	 *
-	 * @return array  An array of site IDs
-	 */
-	protected function get_site_ids(){
-
-		global $wpdb;
-
-		$blogs = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs} WHERE site_id = '{$wpdb->siteid}' AND spam = '0' AND deleted = '0' AND archived = '0' ORDER BY registered ASC" );
-
-		return $blogs;
-
-	}
-
-
-	/**
 	 * Build the header row for the plugin CSV file
 	 *
 	 * @since  1.0.0
@@ -546,6 +528,24 @@ class MultisitePluginCSV {
 		}
 
 		return $row;
+
+	}
+
+
+	/**
+	 * Get the ids of sites active on the network
+	 *
+	 * @since  1.0.0
+	 *
+	 * @return array  An array of site IDs
+	 */
+	protected function get_site_ids(){
+
+		global $wpdb;
+
+		$blogs = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs} WHERE site_id = '{$wpdb->siteid}' AND spam = '0' AND deleted = '0' AND archived = '0' ORDER BY registered ASC" );
+
+		return $blogs;
 
 	}
 
