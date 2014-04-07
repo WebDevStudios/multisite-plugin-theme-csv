@@ -278,7 +278,7 @@ class MultisitePluginCSV {
 		$fh = @fopen( 'php://output', 'w' );
 
 			// Get our header row
-			$header = $this->generate_csv_header_themes();
+			$header = $this->generate_csv_header_theme();
 
 			// Add the header row
 			fputcsv( $fh, $header );
@@ -390,7 +390,7 @@ class MultisitePluginCSV {
 	 *
 	 * @return array  An array of columns used in the theme CSV file
 	 */
-	protected function generate_csv_header_themes() {
+	protected function generate_csv_header_theme() {
 
 		// Create an array to hold our header data
 		$header = array();
