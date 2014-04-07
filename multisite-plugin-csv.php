@@ -65,11 +65,11 @@ class MultisitePluginCSV {
 
 
 	/**
-	 * Array of all network active themes.
+	 * Array of all network available themes.
 	 *
 	 * @type string
 	 */
-	public $all_themes_network = '';
+	public $network_available_themes = '';
 
 
 	/**
@@ -259,7 +259,7 @@ class MultisitePluginCSV {
 
 		// Get all of our theme data for the network
 		$this->all_themes = wp_get_themes();
-		$this->all_themes_network = wp_get_themes( array( 'allowed' => 'network' ) );
+		$this->network_available_themes = wp_get_themes( array( 'allowed' => 'network' ) );
 
 		// Get main network site domain and sanitize
 		global $current_site;
@@ -508,7 +508,7 @@ class MultisitePluginCSV {
 				$row[] = __( 'Active', 'multisite-plugin-theme-csv' );
 
 			// If it's network available
-			} elseif ( in_array( $theme, array_keys( $this->all_themes_network ) ) ) {
+			} elseif ( in_array( $theme, array_keys( $this->network_available_themes ) ) ) {
 
 				$row[] = __( 'Available (Network)', 'multisite-plugin-theme-csv' );
 
