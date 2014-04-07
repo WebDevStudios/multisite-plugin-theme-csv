@@ -11,9 +11,9 @@ Text Domain: multisite-plugin-theme-csv
 Domain Path: /languages
 */
 
-add_action( 'plugins_loaded', array ( MultisitePluginCSV::get_instance(), 'plugin_setup' ) );
+add_action( 'plugins_loaded', array ( MultisitePluginThemeCSV::get_instance(), 'plugin_setup' ) );
 
-class MultisitePluginCSV {
+class MultisitePluginThemeCSV {
 
 	/**
 	 * Plugin instance.
