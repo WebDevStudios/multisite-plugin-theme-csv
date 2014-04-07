@@ -99,8 +99,6 @@ class MultisitePluginCSV {
 		$this->plugin_path   = plugin_dir_path( __FILE__ );
 		$this->load_language( 'multisite-plugin-theme-csv' );
 
-		$this->network_active_plugins = array_keys( get_site_option( 'active_sitewide_plugins', false, false ) );
-
 		add_action( 'network_admin_menu', array( $this, 'multisite_plugin_theme_csv_menu' ) );
 		add_action( 'admin_init', array( $this, 'check_request' ) );
 
@@ -206,6 +204,7 @@ class MultisitePluginCSV {
 
 		// Get all of our plugin data for the network
 		$this->all_plugins = get_plugins();
+		$this->network_active_plugins = array_keys( get_site_option( 'active_sitewide_plugins', false, false ) );
 
 		// Get main network site domain and sanitize
 		global $current_site;
